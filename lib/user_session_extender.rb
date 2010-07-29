@@ -63,8 +63,23 @@ module UserSessionExtender
   end
 end
 
+module Rack
+  class Request
+    # ユーザ情報を提供するインターフェース
+    attr_reader :user
+  end
+end
+
 module ActionController
   class Base
     include UserSessionExtender::InstanceMethods
+
+    # = ユーザ情報の準備
+    # Author:: oyajikun
+    def prepare_user_info
+      request.instance_variable_set("@user", current_user)
+    end
+
+    before_filter :prepare_user_info
   end
 end
